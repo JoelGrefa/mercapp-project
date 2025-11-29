@@ -1,11 +1,14 @@
 <script setup>
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';   // 👈 ACTUALIZADO
 import { ref, onMounted, computed } from 'vue';
 import { useApi } from '../composables/useApi';
 import { useCartStore } from '../store/cart';
+import { useToast } from '../composables/useToast';
 
 const route = useRoute();
+const router = useRouter();                         // 👈 NUEVO
 const cartStore = useCartStore();
+const { showToast } = useToast();
 
 const product = ref(null);
 const loading = ref(false);
@@ -13,7 +16,7 @@ const error = ref(null);
 
 const { request } = useApi('http://localhost:4000');
 
-// Resolver URL de la imagen igual que en las cards
+// Resuelve la URL de la imagen
 const imageSrc = computed(() => {
   if (!product.value?.imageUrl) {
     return 'https://via.placeholder.com/800x500?text=MercApp';
@@ -43,7 +46,14 @@ const fetchProduct = async () => {
 const addToCart = () => {
   if (!product.value) return;
   cartStore.addItem(product.value);
-  alert(`"${product.value.name}" se agregó al carrito`);
+  // 🔹 AQUÍ usamos el toast en vez de alert
+  showToast(`"${product.value.name}" se agregó al carrito`);
+};
+
+// 👇 NUEVO
+const goToEdit = () => {
+  if (!product.value) return;
+  router.push(`/product/${route.params.id}/edit`);
 };
 
 onMounted(fetchProduct);
@@ -82,9 +92,15 @@ onMounted(fetchProduct);
           {{ product.description }}
         </p>
 
-        <button class="btn" type="button" @click="addToCart">
-          Añadir al carrito
-        </button>
+        <div class="actions">
+          <button class="btn" type="button" @click="addToCart">
+            Añadir al carrito
+          </button>
+
+          <button class="btn-secondary" type="button" @click="goToEdit">
+            Editar producto
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -102,7 +118,7 @@ onMounted(fetchProduct);
   align-items: center;
 }
 
-/* Marco para la imagen */
+/* Imagen */
 .image-wrapper {
   display: flex;
   justify-content: center;
@@ -127,7 +143,7 @@ onMounted(fetchProduct);
   object-fit: contain;
 }
 
-/* TEXTO: todo en oscuro para buena lectura */
+/* Texto */
 .info h1 {
   margin: 0 0 0.5rem;
   font-size: 2rem;
@@ -144,13 +160,12 @@ onMounted(fetchProduct);
   margin: 0 0 1rem;
   font-size: 1.6rem;
   font-weight: 700;
-  color: #ea580c; /* naranja tipo oferta */
+  color: #ea580c;
 }
 
-/* 🔹 Descripción ahora sí bien visible */
 .description {
   margin-bottom: 1.5rem;
-  color: #374151;   /* gris oscuro */
+  color: #374151;
   font-size: 0.95rem;
   line-height: 1.5;
 }
@@ -186,5 +201,28 @@ onMounted(fetchProduct);
   .image-frame {
     max-width: 100%;
   }
+}
+
+/* 👇 NUEVO */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Ya tienes .btn, creamos un secundario */
+.btn-secondary {
+  padding: 0.75rem 1.4rem;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
 }
 </style>

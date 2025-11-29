@@ -1,5 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router';
+import Toast from './components/Toast.vue';
 </script>
 
 <template>
@@ -28,6 +29,9 @@ import { RouterLink, RouterView } from 'vue-router';
         <span>Desarrollado por Joel Grefa</span>
       </div>
     </footer>
+
+    <!-- 🔹 Notificación global, visible en todas las páginas -->
+    <Toast />
   </div>
 </template>
 
@@ -46,11 +50,11 @@ import { RouterLink, RouterView } from 'vue-router';
   padding: 0 2rem;
 }
 
-/* navbar clara con sombra ligera */
+/* HEADER OSCURO */
 .navbar {
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+  background: linear-gradient(to right, #020617, #111827);
+  border-bottom: 1px solid #020617;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.5);
 }
 
 .nav {
@@ -63,7 +67,7 @@ import { RouterLink, RouterView } from 'vue-router';
 .logo {
   font-weight: 800;
   font-size: 1.2rem;
-  color: #2563eb; /* azul marca */
+  color: #38bdf8;
   text-decoration: none;
 }
 
@@ -74,13 +78,13 @@ import { RouterLink, RouterView } from 'vue-router';
 
 .nav-links a {
   text-decoration: none;
-  color: #4b5563;
+  color: #e5e7eb;
   font-size: 0.95rem;
 }
 
 .nav-links a.router-link-active {
   font-weight: 600;
-  color: #111827;
+  color: #ffffff;
   border-bottom: 2px solid #f59e0b;
 }
 

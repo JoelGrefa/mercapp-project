@@ -1,48 +1,108 @@
 <script setup>
-import { useRouter } from 'vue-router';
-import { useProducts } from '../composables/useProducts';
-import { useCartStore } from '../store/cart';
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';              // 👈 NUEVO
 import ProductCard from '../components/ProductCard.vue';
+import { useApi } from '../composables/useApi';
+import { useCartStore } from '../store/cart';
+import { useToast } from '../composables/useToast';
 
-const router = useRouter();
+const router = useRouter();                          // 👈 NUEVO
+
 const cartStore = useCartStore();
+const { showToast } = useToast();
 
-const {
-  categories,
-  loading,
-  error,
-  searchQuery,
-  selectedCategory,
-  visibleProducts,
-} = useProducts();
+const { request } = useApi('http://localhost:4000');
 
-const goToDetail = (id) => {
-  router.push({ name: 'product-detail', params: { id } });
+const products = ref([]);
+const categories = ref([]);
+const search = ref('');
+const selectedCategory = ref('all');
+const loading = ref(false);
+const error = ref(null);
+
+const fetchData = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    const [productsData, categoriesData] = await Promise.all([
+      request({ url: '/api/products', method: 'GET' }),
+      request({ url: '/api/categories', method: 'GET' }),
+    ]);
+
+    products.value = productsData;
+    categories.value = categoriesData;
+  } catch (err) {
+    error.value = err;
+  } finally {
+    loading.value = false;
+  }
 };
+
+onMounted(fetchData);
+
+const filteredProducts = computed(() => {
+  let list = products.value;
+
+  if (search.value.trim()) {
+    const term = search.value.toLowerCase();
+    list = list.filter(
+      (p) =>
+        p.name.toLowerCase().includes(term) ||
+        (p.description && p.description.toLowerCase().includes(term)),
+    );
+  }
+
+  if (selectedCategory.value !== 'all') {
+    list = list.filter(
+      (p) => p.categoryId === Number(selectedCategory.value),
+    );
+  }
+
+  return list;
+});
 
 const handleAddToCart = (product) => {
   cartStore.addItem(product);
-  alert(`"${product.name}" se agregó al carrito`);
+  showToast(`"${product.name}" se agregó al carrito`);
+};
+
+const handleOpenDetail = (id) => {
+  window.location.href = `/product/${id}`;
+};
+
+// 👇 NUEVO
+const goToNewProduct = () => {
+  router.push('/product/new');
 };
 </script>
 
 <template>
   <section class="page">
-    <header class="page-header">
-      <div>
-        <p class="eyebrow">Catálogo de productos</p>
-        <h1>MercApp</h1>
-        <p class="subtitle">
-          Explora, filtra y añade productos a tu carrito en tiempo real.
-        </p>
+    <header class="header">
+      <div class="header-main">
+        <div>
+          <p class="eyebrow">Catálogo de productos</p>
+          <h1>MercApp</h1>
+          <p class="subtitle">
+            Explora, filtra y añade productos a tu carrito en tiempo real.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="btn-new-product"
+          @click="goToNewProduct"
+        >
+          + Nuevo producto
+        </button>
       </div>
     </header>
 
-    <div class="filters">
+    <section class="filters">
       <input
-        v-model="searchQuery"
+        v-model="search"
         type="text"
-        placeholder="Buscar por nombre o descripción..."
+        placeholder="Buscar por nombre o descripción"
       />
 
       <select v-model="selectedCategory">
@@ -55,25 +115,31 @@ const handleAddToCart = (product) => {
           {{ cat.name }}
         </option>
       </select>
-    </div>
+    </section>
 
-    <div v-if="loading" class="state">Cargando productos...</div>
-    <div v-else-if="error" class="state error">
-      Ocurrió un error al cargar los productos.
-    </div>
-    <div v-else-if="visibleProducts.length === 0" class="state">
-      No hay productos que coincidan con la búsqueda.
-    </div>
+    <section v-if="loading" class="state">
+      Cargando productos...
+    </section>
 
-    <div class="grid" v-else>
-      <ProductCard
-        v-for="product in visibleProducts"
-        :key="product.id"
-        :product="product"
-        @open-detail="goToDetail"
-        @added-to-cart="handleAddToCart"
-      />
-    </div>
+    <section v-else-if="error" class="state error">
+      Error al cargar productos.
+    </section>
+
+    <section v-else>
+      <p v-if="filteredProducts.length === 0" class="state">
+        No se encontraron productos para los filtros aplicados.
+      </p>
+
+      <div v-else class="grid">
+        <ProductCard
+          v-for="product in filteredProducts"
+          :key="product.id"
+          :product="product"
+          @added-to-cart="handleAddToCart"
+          @open-detail="handleOpenDetail"
+        />
+      </div>
+    </section>
   </section>
 </template>
 
@@ -84,14 +150,12 @@ const handleAddToCart = (product) => {
   gap: 1.75rem;
 }
 
-.page-header {
+.header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-/* Títulos con texto oscuro */
 .eyebrow {
   text-transform: uppercase;
   font-size: 0.75rem;
@@ -101,7 +165,7 @@ const handleAddToCart = (product) => {
 }
 
 h1 {
-  font-size: 2.2rem;
+  font-size: 2rem;
   margin: 0;
   color: #111827;
 }
@@ -112,7 +176,6 @@ h1 {
   font-size: 0.95rem;
 }
 
-/* Inputs claros sobre fondo claro */
 .filters {
   display: flex;
   gap: 1rem;
@@ -130,21 +193,45 @@ h1 {
   min-width: 220px;
 }
 
-.filters input::placeholder {
-  color: #6b7280;
-}
-
+/* grid de productos */
 .grid {
+  margin-top: 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1.5rem;
 }
 
 .state {
   margin-top: 1rem;
+  color: #4b5563;
 }
 
 .state.error {
-  color: #f87171;
+  color: #dc2626;
+}
+
+/* 👇 NUEVO */
+.header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.btn-new-product {
+  align-self: center;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-new-product:hover {
+  background: #1d4ed8;
 }
 </style>
