@@ -4,76 +4,59 @@ import { RouterLink } from 'vue-router';
 
 <template>
   <section class="page">
-    <div class="content">
-      <p class="code">404</p>
-      <h1>Página no encontrada</h1>
-      <p class="text">
-        La ruta que intentas acceder no existe o ya no se encuentra disponible.
-        Verifica la dirección o vuelve al catálogo de productos.
-      </p>
+    <div class="card">
+      <h1>404 - Página no encontrada</h1>
+      <p>La ruta que intentas acceder no existe.</p>
 
-      <div class="actions">
-        <RouterLink to="/" class="btn-primary">
-          Volver al catálogo
-        </RouterLink>
-      </div>
+      <!-- 🔹 Botón Volver al catálogo -->
+      <RouterLink to="/" class="back-btn">
+        Volver al catálogo
+      </RouterLink>
     </div>
   </section>
 </template>
 
 <style scoped>
 .page {
-  min-height: calc(100vh - 140px);
+  min-height: calc(100vh - 7rem); /* aprox. restando header y footer */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.content {
+.card {
+  background-color: #ffffff;
+  padding: 1.8rem 2.2rem;
+  border-radius: 0.9rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
   text-align: center;
-  max-width: 480px;
-}
-
-.code {
-  margin: 0;
-  font-size: 3.5rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: #e5e7eb;
 }
 
 h1 {
-  margin: 0.2rem 0 0.4rem;
-  font-size: 1.7rem;
+  margin: 0 0 0.75rem;
+  font-size: 1.4rem;
   color: #111827;
 }
 
-.text {
-  margin: 0;
-  color: #6b7280;
-  font-size: 0.95rem;
+p {
+  margin: 0 0 1.25rem;
+  color: #4b5563;
 }
 
-.actions {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: center;
-}
-
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.7rem 1.4rem;
+/* 🔹 Estilo del botón */
+.back-btn {
+  display: inline-block;
+  padding: 0.55rem 1.3rem;
   border-radius: 999px;
-  background: #2563eb;
+  background-color: #2563eb;
   color: #ffffff;
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;
 }
 
-.btn-primary:hover {
-  background: #1d4ed8;
+.back-btn:hover {
+  background-color: #1d4ed8;
 }
 </style>

@@ -1,12 +1,12 @@
 <script setup>
-import { useRoute, useRouter } from 'vue-router';   // 👈 ACTUALIZADO
+import { useRoute, useRouter, RouterLink } from 'vue-router';   // 👈 ACTUALIZADO
 import { ref, onMounted, computed } from 'vue';
 import { useApi } from '../composables/useApi';
 import { useCartStore } from '../store/cart';
 import { useToast } from '../composables/useToast';
 
 const route = useRoute();
-const router = useRouter();                         // 👈 NUEVO
+const router = useRouter();
 const cartStore = useCartStore();
 const { showToast } = useToast();
 
@@ -46,11 +46,10 @@ const fetchProduct = async () => {
 const addToCart = () => {
   if (!product.value) return;
   cartStore.addItem(product.value);
-  // 🔹 AQUÍ usamos el toast en vez de alert
+  // 🔹 Usamos toast en vez de alert
   showToast(`"${product.value.name}" se agregó al carrito`);
 };
 
-// 👇 NUEVO
 const goToEdit = () => {
   if (!product.value) return;
   router.push(`/product/${route.params.id}/edit`);
@@ -68,7 +67,8 @@ onMounted(fetchProduct);
     </div>
 
     <div v-else-if="!product" class="state">
-      Producto no encontrado.
+      <p>Producto no encontrado.</p>
+      <RouterLink to="/" class="back-btn">Volver al catálogo</RouterLink>
     </div>
 
     <div v-else class="detail">
@@ -203,14 +203,14 @@ onMounted(fetchProduct);
   }
 }
 
-/* 👇 NUEVO */
+/* Acciones */
 .actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
 }
 
-/* Ya tienes .btn, creamos un secundario */
+/* Botón secundario */
 .btn-secondary {
   padding: 0.75rem 1.4rem;
   border-radius: 999px;
@@ -224,5 +224,22 @@ onMounted(fetchProduct);
 
 .btn-secondary:hover {
   background: #e5e7eb;
+}
+
+/* 👇 NUEVO: botón "Volver al catálogo" cuando no hay producto */
+.back-btn {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  background-color: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.back-btn:hover {
+  background-color: #1d4ed8;
 }
 </style>

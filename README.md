@@ -1,127 +1,103 @@
-# MercApp
+📦 MercApp
 
-MercApp es una aplicación web de catálogo y carrito de compras desarrollada como proyecto académico para la asignatura de **Aplicaciones Web**.  
+MercApp es una aplicación web de catálogo y carrito de compras desarrollada como proyecto académico para la asignatura de Aplicaciones Web.
 
-El sistema está dividido en dos partes:
+El sistema está compuesto por dos módulos:
 
-- **Backend**: API REST construida con Node.js, Express y Sequelize.
-- **Frontend**: Single Page Application (SPA) construida con Vue 3 y Vite.
+Backend: API REST construida con Node.js, Express y Sequelize.
 
----
+Frontend: SPA desarrollada con Vue 3 y Vite.
 
-## Requisitos previos
+📋 Requisitos Previos
 
 Antes de ejecutar el proyecto, asegúrate de tener instalado:
 
-- [Node.js](https://nodejs.org/) (versión 18 o superior recomendada)
-- npm (incluido con Node.js)
+Node.js 18+ → https://nodejs.org
 
-> Opcionalmente, puedes usar `yarn` o `pnpm`, pero los comandos aquí están escritos con `npm`.
+npm (incluido con Node.js)
 
----
+También puedes usar yarn o pnpm, pero los ejemplos usan npm.
 
-## Estructura del proyecto
-
-```text
+🗂️ Estructura del Proyecto
 MercApp/
-  backend/   # API REST (Node.js + Express + Sequelize)
-  frontend/  # SPA (Vue 3 + Vite)
-
+  backend/    # API REST (Node.js + Express + Sequelize)
+  frontend/   # SPA (Vue 3 + Vite)
 
 🚀 Puesta en Marcha del Proyecto
 🛠️ 1. Backend
-🔧 Instalación y ejecución
+🔧 Instalación
 
-Abrir una terminal en la carpeta del backend:
+Abrir una terminal dentro del directorio backend:
 
 cd backend
-
-
-Instalar dependencias:
-
 npm install
 
-
-Cargar datos de prueba (opcional, pero recomendado):
-
+📦 Datos de prueba (opcional)
 npm run seed
 
-
-Iniciar el servidor:
-
+▶️ Ejecutar servidor
 npm start
 
-
-🌐 API disponible en:
-
+🌐 La API estará disponible en:
 http://localhost:4000
 
 🎨 2. Frontend
+🔧 Instalación
 
-Abrir otra terminal y dirigirse al frontend:
+En otra terminal, ingresar a la carpeta del frontend:
 
 cd frontend
-
-
-Instalar dependencias:
-
 npm install
 
-
-Iniciar el servidor de desarrollo (Vite):
-
+▶️ Iniciar servidor de desarrollo
 npm run dev
 
-
-Acceder en el navegador:
-
+🌐 Acceder en el navegador
 http://localhost:5173
 
-✨ 3. Funcionalidades Principales
+✨ Funcionalidades Principales
+📁 Catálogo
 
-🖼️ Catálogo de productos con imágenes
+Visualización de productos con imágenes
 
-🔍 Búsqueda por nombre o descripción
+Búsqueda por nombre o descripción
 
-🏷️ Filtrado por categorías
+Filtrado por categorías
 
-📄 Detalle de producto por ruta dinámica (/product/:id)
+Vista de detalle mediante rutas dinámicas: /product/:id
 
-🛒 Carrito de compras con Pinia:
+🛒 Carrito de Compras
 
-Añadir, quitar y modificar cantidades
+Implementado con Pinia
 
-Persistencia en localStorage
+Agregar, quitar y modificar cantidades
 
-📝 Formularios para creación y edición de productos:
+Persistencia automática en localStorage
 
-Nuevo: /product/new
+📝 Gestión de Productos
 
-Editar: /product/:id/edit
+Crear producto: /product/new
 
-📌 Páginas adicionales:
+Editar producto: /product/:id/edit
+
+📌 Páginas adicionales
 
 Carrito: /cart
 
 Acerca de: /about
 
-❌ Página 404 personalizada
+Página 404 personalizada
 
-📜 4. Scripts Útiles
+📜 Scripts Útiles
 🔙 Backend (/backend)
-
-npm start → Inicia la API
-
-npm run seed → Carga datos de ejemplo
+npm start       # Inicia la API
+npm run seed    # Carga datos de ejemplo
 
 🎨 Frontend (/frontend)
+npm run dev       # Servidor de desarrollo
+npm run build     # Build de producción
+npm run preview   # Previsualización de la build
 
-npm run dev → Servidor de desarrollo
+👤 Autor
 
-npm run build → Build de producción
-
-npm run preview → Previsualización de la build
-
-👤 5. Autor
-
-Proyecto desarrollado por Joel Grefa como parte de la Unidad 3 del curso de Aplicaciones Web.
+Proyecto desarrollado por Joel Grefa como parte de la Unidad 3 del curso Aplicaciones Web.
