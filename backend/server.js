@@ -1,11 +1,9 @@
-require('dotenv').config(); // Para leer MONGODB_URI y PORT
-
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
 
-const { connectMongo } = require('./src/db/mongo');
+const { sequelize } = require('./src/models');
 const productRoutes = require('./src/routes/product.routes');
 const categoryRoutes = require('./src/routes/category.routes');
 
@@ -26,20 +24,20 @@ app.use('/api/categories', categoryRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
-  res.json({ message: 'MercApp API funcionando correctamente desde MongoDB' });
+  res.json({ message: 'MercApp API funcionando correctamente' });
 });
 
 // Iniciar servidor solo si la BD conecta
 async function start() {
   try {
-    await connectMongo();
+    await sequelize.authenticate();
+    console.log('🗄️ Conexión a la base de datos establecida correctamente.');
 
     app.listen(PORT, () => {
       console.log(`🟢 Servidor MercApp API en http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.error('❌ Error al conectar con MongoDB Atlas:', error.message);
-    process.exit(1);
+    console.error('❌ Error al conectar con la base de datos:', error);
   }
 }
 
