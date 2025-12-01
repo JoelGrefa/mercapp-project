@@ -1,19 +1,20 @@
+// server.js
 require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
+const mongoose = require('mongoose');
 
-// 👇 OJO: quitamos Sequelize por ahora
-// const { sequelize } = require('./src/models');
-
+// 👇 Importar rutas
 const productRoutes = require('./src/routes/product.routes');
 const categoryRoutes = require('./src/routes/category.routes');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 const FRONTEND_URL = process.env.FRONTEND_URL || '*';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/mercapp';
 
 // Middlewares globales
 app.use(cors({
@@ -35,7 +36,16 @@ app.get('/', (req, res) => {
   res.json({ message: 'MercApp API funcionando correctamente' });
 });
 
-// Iniciar servidor SIN Sequelize
-app.listen(PORT, () => {
-  console.log(`🟢 Servidor MercApp API escuchando en el puerto ${PORT}`);
-});
+// 🔌 Conexión a MongoDB con Mongoose y arranque del servidor
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    console.log('✅ Conectado a MongoDB');
+    app.listen(PORT, () => {
+      console.log(`🟢 Servidor MercApp API escuchando en el puerto ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ Error al conectar a MongoDB:', err);
+    process.exit(1);
+  });
